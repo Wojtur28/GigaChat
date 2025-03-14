@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 62315
+      database: mydatabase
+      username: root
+      password: secret
+      authentication-database: admin
+
+  main:
+    web-application-type: reactive
