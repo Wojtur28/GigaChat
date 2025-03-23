@@ -28,7 +28,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     public Mono<Void> handle(WebSocketSession session) {
         String roomId = extractRoomId(session);
         sessions.put(session, session.getId());
-        System.out.println("✅ Nowe połączenie WebSocket dla pokoju: " + roomId);
+        System.out.println("New WebSocket connection: " + roomId);
 
         Flux<String> messagesFlux = chatService.getMessagesForRoom(roomId)
                 .map(this::toJson)
@@ -36,16 +36,13 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 
         return session.send(messagesFlux.map(session::textMessage))
                 .and(session.receive().doOnNext(message -> {
-                    // Możesz tutaj dodać logikę obsługi wiadomości przychodzących
-                    System.out.println("📥 Otrzymano wiadomość od klienta: " + message.getPayload());
+                    System.out.println("Got message from room: " + message.getPayload());
                 }).doFinally(signalType -> {
-                    System.out.println("❌ WebSocket zamknięty dla pokoju: " + roomId);
+                    System.out.println("WebSocket is closed for room: " + roomId);
                     sessions.remove(session);
                 }))
                 .then();
     }
-
-
 
     private String extractRoomId(WebSocketSession session) {
         String query = session.getHandshakeInfo().getUri().getQuery();

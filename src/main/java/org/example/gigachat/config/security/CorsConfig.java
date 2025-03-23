@@ -1,4 +1,4 @@
-package org.example.gigachat.config;
+package org.example.gigachat.config.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.CorsRegistry;

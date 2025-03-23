@@ -10,3 +10,6 @@ spring:
 
   main:
     web-application-type: reactive
+
+jwt:
+  token-expiration-seconds: 3600000
