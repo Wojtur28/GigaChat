@@ -1,14 +1,14 @@
 package org.example.gigachat.config.security;
 
 import org.example.gigachat.config.security.dto.LoginResponse;
-import org.example.gigachat.config.security.dto.LoginUser;
+import org.example.gigachat.config.security.dto.LoginRequest;
 import org.example.gigachat.config.security.dto.RegisterResponse;
-import org.example.gigachat.config.security.dto.RegisterUser;
+import org.example.gigachat.config.security.dto.RegisterRequest;
 import reactor.core.publisher.Mono;
 
 public interface AuthService {
 
-    Mono<LoginResponse> login (LoginUser loginUser);
+    Mono<LoginResponse> login (LoginRequest loginRequest);
 
-    Mono<RegisterResponse> register (RegisterUser registerUser);
+    Mono<RegisterResponse> register (RegisterRequest registerRequest);
 }

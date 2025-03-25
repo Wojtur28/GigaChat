@@ -3,9 +3,9 @@ package org.example.gigachat.user;
 import lombok.RequiredArgsConstructor;
 import org.example.gigachat.config.security.AuthServiceImpl;
 import org.example.gigachat.config.security.dto.LoginResponse;
-import org.example.gigachat.config.security.dto.LoginUser;
+import org.example.gigachat.config.security.dto.LoginRequest;
 import org.example.gigachat.config.security.dto.RegisterResponse;
-import org.example.gigachat.config.security.dto.RegisterUser;
+import org.example.gigachat.config.security.dto.RegisterRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +18,12 @@ public class LoginController {
     private final AuthServiceImpl authService;
 
     @PostMapping("/login")
-    Mono<LoginResponse> login(@RequestBody LoginUser loginUser) {
-        return authService.login(loginUser);
+    Mono<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 
     @PostMapping("/register")
-    Mono<RegisterResponse> register(@RequestBody RegisterUser registerUser) {
-        return authService.register(registerUser);
+    Mono<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
+        return authService.register(registerRequest);
     }
 }
