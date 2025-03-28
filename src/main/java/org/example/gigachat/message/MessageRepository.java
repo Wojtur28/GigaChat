@@ -7,5 +7,7 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface MessageRepository extends ReactiveMongoRepository<Message, String> {
 
-    Flux<Message> findByRoomId(String roomId);
+    Flux<Message> findByConversationId(String conversationId);
+
+
 }
