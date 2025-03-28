@@ -14,25 +14,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @AllArgsConstructor
 public class ChatService {
     private final MessageRepository messageRepository;
-    private final Map<String, Sinks.Many<Message>> roomSinks = new ConcurrentHashMap<>();
-
-    public Flux<Message> getMessagesByRoom(String roomId) {
-        return messageRepository.findByRoomId(roomId);
-    }
+    private final Map<String, Sinks.Many<Message>> conversationSinks = new ConcurrentHashMap<>();
 
     public Mono<Message> sendMessage(Message message) {
         message.setId(null);
         message.setTimestamp(Instant.now());
-
         return messageRepository.save(message)
-                .doOnSuccess(savedMessage -> getRoomSink(savedMessage.getRoomId()).tryEmitNext(savedMessage));
+                .doOnSuccess(savedMessage -> getConversationSink(savedMessage.getConversationId()).tryEmitNext(savedMessage));
     }
 
-    public Flux<Message> getMessagesForRoom(String roomId) {
-        return getRoomSink(roomId).asFlux();
+    public Flux<Message> getMessagesForConversation(String conversationId) {
+        return getConversationSink(conversationId).asFlux();
     }
 
-    private Sinks.Many<Message> getRoomSink(String roomId) {
-        return roomSinks.computeIfAbsent(roomId, k -> Sinks.many().multicast().onBackpressureBuffer());
+    private Sinks.Many<Message> getConversationSink(String conversationId) {
+        return conversationSinks.computeIfAbsent(conversationId, k -> Sinks.many().multicast().onBackpressureBuffer());
     }
+
+    public Flux<Message> getMessagesByConversation(String conversationId) {
+        return messageRepository.findByConversationId(conversationId);
+    }
+
 }

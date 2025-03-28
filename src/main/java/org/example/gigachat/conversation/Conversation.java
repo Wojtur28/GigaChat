@@ -1,4 +1,4 @@
-package org.example.gigachat.message;
+package org.example.gigachat.conversation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,20 +7,24 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 
-@Document(collection = "messages")
+@Document(collection = "conversations")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
+public class Conversation {
+
     @Id
     private String id;
 
-    private String authorId;
+    private ConversationType type;
 
-    private String conversationId;
+    private List<String> participantIds;
 
-    private String content;
+    private String name;
 
-    private Instant timestamp;
+    private Instant createdAt;
+
+    private Instant updatedAt;
 }

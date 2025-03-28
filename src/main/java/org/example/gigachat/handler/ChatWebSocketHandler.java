@@ -13,6 +13,7 @@ import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,27 +27,32 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
-        String roomId = extractRoomId(session);
+        String conversationId = extractConversationId(session);
         sessions.put(session, session.getId());
-        System.out.println("New WebSocket connection: " + roomId);
+        System.out.println("New WebSocket connection: " + conversationId);
 
-        Flux<String> messagesFlux = chatService.getMessagesForRoom(roomId)
-                .map(this::toJson)
-                .concatWith(Flux.never());
+        Flux<String> historicalMessages = chatService.getMessagesByConversation(conversationId)
+                .map(this::toJson);
 
-        return session.send(messagesFlux.map(session::textMessage))
-                .and(session.receive().doOnNext(message -> {
-                    System.out.println("Got message from room: " + message.getPayload());
-                }).doFinally(signalType -> {
-                    System.out.println("WebSocket is closed for room: " + roomId);
-                    sessions.remove(session);
-                }))
-                .then();
+        Flux<String> liveMessages = chatService.getMessagesForConversation(conversationId)
+                .map(this::toJson);
+
+        Flux<String> combinedMessages = Flux.concat(historicalMessages, liveMessages);
+
+        return session.send(combinedMessages.map(session::textMessage))
+                .and(session.receive()
+                        .flatMap(webSocketMessage -> {
+                            Message message = fromJson(webSocketMessage.getPayloadAsText());
+                            message.setConversationId(conversationId);
+                            message.setTimestamp(Instant.now());
+                            return chatService.sendMessage(message);
+                        })
+                        .then());
     }
 
-    private String extractRoomId(WebSocketSession session) {
+    private String extractConversationId(WebSocketSession session) {
         String query = session.getHandshakeInfo().getUri().getQuery();
-        if (query != null && query.startsWith("roomId=")) {
+        if (query != null && query.startsWith("conversationId=")) {
             return query.substring(7);
         }
         return "general";
@@ -56,7 +62,16 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         try {
             return objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Błąd serializacji JSON", e);
+            throw new RuntimeException("Error with serialization: ", e);
         }
     }
+
+    private Message fromJson(String payload) {
+        try {
+            return objectMapper.readValue(payload, Message.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error with deserialization: ", e);
+        }
+    }
+
 }
