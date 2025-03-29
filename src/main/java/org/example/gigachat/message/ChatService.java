@@ -7,32 +7,32 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
 import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Comparator;
 
 @Service
 @AllArgsConstructor
 public class ChatService {
+    private final Sinks.Many<Message> messageSink = Sinks.many().multicast().directAllOrNothing();
+    private final Flux<Message> messageFlux = messageSink.asFlux().publish().autoConnect();
     private final MessageRepository messageRepository;
-    private final Map<String, Sinks.Many<Message>> conversationSinks = new ConcurrentHashMap<>();
 
-    public Mono<Message> sendMessage(Message message) {
-        message.setId(null);
-        message.setTimestamp(Instant.now());
-        return messageRepository.save(message)
-                .doOnSuccess(savedMessage -> getConversationSink(savedMessage.getConversationId()).tryEmitNext(savedMessage));
+    public Flux<Message> getMessagesByConversation(String conversationId) {
+        return messageRepository.findByConversationId(conversationId)
+                .sort(Comparator.comparing(Message::getTimestamp));
     }
 
     public Flux<Message> getMessagesForConversation(String conversationId) {
-        return getConversationSink(conversationId).asFlux();
+        return messageFlux.filter(msg -> conversationId.equals(msg.getConversationId()));
     }
 
-    private Sinks.Many<Message> getConversationSink(String conversationId) {
-        return conversationSinks.computeIfAbsent(conversationId, k -> Sinks.many().multicast().onBackpressureBuffer());
+    public Mono<Message> sendMessage(Message message) {
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(Instant.now());
+        }
+        message.setId(null);
+        return messageRepository
+                .save(message)
+                .doOnNext(messageSink::tryEmitNext);
     }
-
-    public Flux<Message> getMessagesByConversation(String conversationId) {
-        return messageRepository.findByConversationId(conversationId);
-    }
-
 }
+
