@@ -23,10 +23,10 @@ class SecurityConfiguration {
                                                      ServerAuthenticationConverter authenticationConverter) {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(authenticationConverter);
-
         return http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+                        .pathMatchers("/ws/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -43,6 +43,4 @@ class SecurityConfiguration {
                 }))
                 .build();
     }
-
-
 }

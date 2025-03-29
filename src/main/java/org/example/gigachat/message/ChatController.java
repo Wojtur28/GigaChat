@@ -14,7 +14,7 @@ public class ChatController {
 
     @GetMapping("/rooms/{conversationId}/messages")
     public Flux<Message> getMessagesByRoom(@PathVariable String conversationId) {
-        return chatService.getMessagesForConversation(conversationId);
+        return chatService.getMessagesByConversation(conversationId);
     }
 
     @PostMapping("/messages")
