@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthController {
 
     private final AuthServiceImpl authService;
 

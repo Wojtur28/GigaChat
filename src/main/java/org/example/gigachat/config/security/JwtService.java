@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-class JwtService implements TokenProvider {
+public class JwtService implements TokenProvider {
 
     private String secretKey = generateSecretKey();
 
     @Value("${jwt.token-expiration-seconds}")
     private long tokenExpiration;
 
-    String extractUsername(String jwt) {
+    public String extractUsername(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
     }
 

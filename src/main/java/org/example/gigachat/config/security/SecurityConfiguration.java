@@ -13,6 +13,8 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.List;
+
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfiguration {
@@ -23,6 +25,7 @@ class SecurityConfiguration {
                                                      ServerAuthenticationConverter authenticationConverter) {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(authenticationConverter);
+
         return http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/login", "/register").permitAll()
@@ -34,12 +37,12 @@ class SecurityConfiguration {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(corsSpec -> corsSpec.configurationSource(request -> {
-                    var corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.addAllowedOrigin("http://localhost:4200");
-                    corsConfiguration.addAllowedMethod("*");
-                    corsConfiguration.addAllowedHeader("*");
-                    corsConfiguration.setAllowCredentials(true);
-                    return corsConfiguration;
+                    var cors = new CorsConfiguration();
+                    cors.setAllowedOrigins(List.of("https://wojtur.eu", "http://localhost:4200"));
+                    cors.setAllowedMethods(List.of("*"));
+                    cors.setAllowedHeaders(List.of("*"));
+                    cors.setAllowCredentials(true);
+                    return cors;
                 }))
                 .build();
     }
