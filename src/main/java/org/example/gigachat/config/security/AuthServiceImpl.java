@@ -38,6 +38,9 @@ public class AuthServiceImpl implements AuthService {
                 .switchIfEmpty(Mono.defer(() -> {
                     String encodedPassword = passwordEncoder.encode(registerRequest.password());
                     User newUser = new User();
+                    newUser.setFirstName(registerRequest.firstName());
+                    newUser.setLastName(registerRequest.lastName());
+                    newUser.setUsername(registerRequest.username());
                     newUser.setEmail(registerRequest.email());
                     newUser.setPassword(encodedPassword);
                     newUser.setRoles(Collections.singleton(Role.ROLE_USER));

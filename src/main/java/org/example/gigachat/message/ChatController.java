@@ -22,4 +22,8 @@ public class ChatController {
         return chatService.sendMessage(message);
     }
 
+    @DeleteMapping("/messages")
+    public Mono<Void> deleteAllMessages() {
+        return chatService.deleteAllMessages();
+    }
 }
