@@ -8,7 +8,7 @@ pipeline {
     environment {
         JAR_PATTERN = 'GigaChat-*.jar'
         REMOTE_USER = 'root'
-        REMOTE_HOST = 'vmi2534046'
+        REMOTE_HOST = '64a86f43-237c-40cd-a377-56f0e9d27420'
         REMOTE_DIR = '/home/gigachat'
         SSH_CRED_ID = '1c5d625b-c431-471e-8a91-fde82d4b4b0b'
     }
