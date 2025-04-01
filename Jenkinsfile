@@ -26,7 +26,7 @@ pipeline {
             steps {
                 sshagent (credentials: [env.SSH_CRED_ID]) {
                     sh '''
-                        JAR_FILE=$(ls build/libs/${JAR_PATTERN} | sort | tail -n 1)
+                        JAR_FILE=$(ls target/${JAR_PATTERN} | sort | tail -n 1)
                         scp "$JAR_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/"
                     '''
                 }
