@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'jdk21'
+    }
+
     environment {
         JAR_PATTERN = 'GigaChat-*.jar'
         REMOTE_USER = 'root'
@@ -13,7 +17,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-
             }
         }
 
