@@ -30,6 +30,7 @@ class SecurityConfiguration {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                         .pathMatchers("/ws/**").permitAll()
+                        .pathMatchers(HttpMethod.DELETE,"/chat/messages").hasRole("ROLE_ADMIN")
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
