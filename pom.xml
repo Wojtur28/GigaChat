@@ -28,6 +28,8 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
     </properties>
     <dependencies>
         <dependency>
@@ -39,12 +41,6 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
@@ -122,7 +118,26 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <name>build.timestamp</name>
+                            <pattern>yyyyMMdd-HHmm</pattern>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <finalName>${project.artifactId}-${timestamp}</finalName>
     </build>
 
 </project>

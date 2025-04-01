@@ -53,7 +53,6 @@ public class JwtService implements TokenProvider {
                 .subject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .map(role -> role.substring("ROLE_".length()))
                         .toArray())
                 .issuedAt(new Date(currentTimeMillis))
                 .expiration(new Date(currentTimeMillis + tokenExpiration * 1000))
