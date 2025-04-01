@@ -10,7 +10,7 @@ pipeline {
         REMOTE_USER = 'root'
         REMOTE_HOST = 'vmi2534046'
         REMOTE_DIR = '/home/gigachat'
-        SSH_CRED_ID = 'server_jenkins_private_key'
+        SSH_CRED_ID = '1c5d625b-c431-471e-8a91-fde82d4b4b0b'
     }
 
     stages {
