@@ -1,4 +1,4 @@
-package org.example.gigachat.conversation;
+package org.example.gigachat.core.conversation;
 
 public enum ConversationType {
     DIRECT,

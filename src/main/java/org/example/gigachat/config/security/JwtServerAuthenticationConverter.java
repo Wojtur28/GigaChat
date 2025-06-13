@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 class JwtServerAuthenticationConverter implements ServerAuthenticationConverter {
@@ -25,22 +23,19 @@ class JwtServerAuthenticationConverter implements ServerAuthenticationConverter 
         return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(header -> header.startsWith(BEARER))
                 .map(header -> header.substring(BEARER.length()))
-                .map(token -> new JwtToken(token, createUserDetails(token)));
+                .flatMap(token -> createUserDetails(token)
+                        .map(userDetails -> new JwtToken(token, userDetails))
+                );
     }
 
-    private UserDetails createUserDetails(String token) {
-        String username = jwtService.extractUsername(token);
-        return User.builder()
-                .username(username)
-                .authorities(createAuthorities(token))
-                .password("")
-                .build();
-    }
-
-    private List<SimpleGrantedAuthority> createAuthorities(String token) {
-        return jwtService.extractRoles(token).stream()
-                .map(role -> "ROLE_" + role)
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+    private Mono<UserDetails> createUserDetails(String token) {
+        return jwtService.extractUsername(token)
+                .zipWith(jwtService.extractRoles(token))
+                .map(tuple -> User.builder()
+                        .username(tuple.getT1())
+                        .authorities(tuple.getT2().stream().map(SimpleGrantedAuthority::new).toList())
+                        .password("")
+                        .build()
+                );
     }
 }

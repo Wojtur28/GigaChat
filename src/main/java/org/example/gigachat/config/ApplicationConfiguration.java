@@ -1,13 +1,10 @@
 package org.example.gigachat.config;
 
 import lombok.AllArgsConstructor;
-import org.example.gigachat.config.security.AuditorAwareImpl;
 import org.example.gigachat.exception.UserNotFoundException;
-import org.example.gigachat.user.User;
-import org.example.gigachat.user.UserRepository;
+import org.example.gigachat.core.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,12 +13,8 @@ import reactor.core.publisher.Mono;
 @Configuration
 @AllArgsConstructor
 public class ApplicationConfiguration {
-    private final UserRepository userRepository;
 
-    @Bean
-    public AuditorAware<User> auditorProvider() {
-        return new AuditorAwareImpl();
-    }
+    private final UserRepository userRepository;
 
     @Bean
     ReactiveUserDetailsService userDetailsService() {

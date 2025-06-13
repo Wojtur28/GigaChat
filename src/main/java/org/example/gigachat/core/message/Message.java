@@ -1,4 +1,4 @@
-package org.example.gigachat.message;
+package org.example.gigachat.core.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +13,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Message {
+
     @Id
     private String id;
 
