@@ -5,13 +5,14 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.example.gigachat.exception.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +21,26 @@ import java.util.function.Function;
 @Service
 public class JwtService implements TokenProvider {
 
-    private String secretKey = generateSecretKey();
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
     @Value("${jwt.token-expiration-seconds}")
     private long tokenExpiration;
 
-    public String extractUsername(String jwt) {
-        return extractClaim(jwt, Claims::getSubject);
+    public Mono<String> extractUsername(String jwt) {
+        try {
+            return Mono.just(extractClaim(jwt, Claims::getSubject));
+        } catch (JwtException e) {
+            return Mono.error(new JwtAuthenticationException(e.getMessage()));
+        }
     }
 
-    List<String> extractRoles(String jwt) {
-        return extractClaim(jwt, claims -> (List<String>) claims.get("roles"));
+    public Mono<List<String>> extractRoles(String jwt) {
+        try {
+            return Mono.just(extractClaim(jwt, claims -> (List<String>) claims.get("roles")));
+        } catch (JwtException e) {
+            return Mono.error(new JwtAuthenticationException(e.getMessage()));
+        }
     }
 
     @Override
@@ -38,7 +48,7 @@ public class JwtService implements TokenProvider {
         return generateToken(Map.of(), userDetails);
     }
 
-    boolean isTokenValid(String jwt) {
+    public boolean isTokenValid(String jwt) {
         return !isTokenExpired(jwt);
     }
 
@@ -80,11 +90,5 @@ public class JwtService implements TokenProvider {
     private SecretKey getSigningKey() {
         byte[] bytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(bytes);
-    }
-
-    public String generateSecretKey() {
-        SecretKey key = Jwts.SIG.HS512.key().build();
-
-        return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 }

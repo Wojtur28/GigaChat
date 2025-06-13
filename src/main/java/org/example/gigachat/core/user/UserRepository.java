@@ -1,4 +1,4 @@
-package org.example.gigachat.user;
+package org.example.gigachat.core.user;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;

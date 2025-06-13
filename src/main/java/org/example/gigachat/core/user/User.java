@@ -1,4 +1,4 @@
-package org.example.gigachat.user;
+package org.example.gigachat.core.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

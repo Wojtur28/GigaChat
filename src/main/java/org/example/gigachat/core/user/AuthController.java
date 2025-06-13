@@ -1,4 +1,4 @@
-package org.example.gigachat.user;
+package org.example.gigachat.core.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.gigachat.config.security.AuthServiceImpl;

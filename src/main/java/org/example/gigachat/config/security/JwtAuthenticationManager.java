@@ -1,6 +1,7 @@
 package org.example.gigachat.config.security;
 
 import lombok.RequiredArgsConstructor;
+import org.example.gigachat.exception.JwtAuthenticationException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;

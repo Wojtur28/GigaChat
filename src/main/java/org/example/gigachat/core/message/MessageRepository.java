@@ -1,4 +1,4 @@
-package org.example.gigachat.message;
+package org.example.gigachat.core.message;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;

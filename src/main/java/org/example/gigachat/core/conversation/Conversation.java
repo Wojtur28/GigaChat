@@ -1,4 +1,4 @@
-package org.example.gigachat.conversation;
+package org.example.gigachat.core.conversation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
